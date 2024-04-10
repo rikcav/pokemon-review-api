@@ -16,5 +16,5 @@ public interface IReviewService {
 
     ReviewDTO updateReview(int id, ReviewDTO reviewDTO);
 
-    void deleteReview(int id);
+    void deleteReview(int pokemonId, int id);
 }

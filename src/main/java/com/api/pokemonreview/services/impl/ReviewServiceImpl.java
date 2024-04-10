@@ -92,9 +92,15 @@ public class ReviewServiceImpl implements IReviewService {
     }
 
     @Override
-    public void deleteReview(int id) {
-        ReviewDTO reviewDTO = getReview(id);
-        Review review = mapToEntity(reviewDTO);
+    public void deleteReview(int pokemonId, int id) {
+        Pokemon pokemon = pokemonRepository.findById(pokemonId)
+                .orElseThrow(() -> new PokemonNotFoundException("Pokemon could not be found."));
+
+        Review review = reviewRepository.findById(id).orElseThrow();
+
+        if (pokemon.getId() != review.getPokemon().getId()) {
+            throw new ReviewNotFoundException("This review does not belong to this pokemon.");
+        }
 
         reviewRepository.delete(review);
     }
