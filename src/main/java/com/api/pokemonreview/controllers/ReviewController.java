@@ -49,15 +49,15 @@ public class ReviewController {
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
-    @PutMapping("review/{id}")
-    public ResponseEntity<ReviewDTO> updateReview(@PathVariable int id, @RequestBody ReviewDTO reviewDTO) {
-        ReviewDTO updatedDTO = reviewService.updateReview(id, reviewDTO);
+    @PutMapping("pokemon/{pokemonId}/review/{id}")
+    public ResponseEntity<ReviewDTO> updateReview(@PathVariable int pokemonId, @PathVariable int id, @RequestBody ReviewDTO reviewDTO) {
+        ReviewDTO updatedDTO = reviewService.updateReview(pokemonId, id, reviewDTO);
         return new ResponseEntity<>(updatedDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping("review/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable int id) {
-        reviewService.deleteReview(id);
+    @DeleteMapping("pokemon/{pokemonId}/review/{id}")
+    public ResponseEntity<Void> deleteReview(@PathVariable int pokemonId, @PathVariable int id) {
+        reviewService.deleteReview(pokemonId, id);
         return ResponseEntity.noContent().build();
     }
 }
