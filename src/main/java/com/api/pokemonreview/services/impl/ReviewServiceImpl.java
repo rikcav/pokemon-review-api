@@ -102,7 +102,8 @@ public class ReviewServiceImpl implements IReviewService {
         Pokemon pokemon = pokemonRepository.findById(pokemonId)
                 .orElseThrow(() -> new PokemonNotFoundException("Pokemon could not be found."));
 
-        Review review = reviewRepository.findById(id).orElseThrow();
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new ReviewNotFoundException("Review could not be found."));
 
         if (pokemon.getId() != review.getPokemon().getId()) {
             throw new ReviewNotFoundException("This review does not belong to this pokemon.");
