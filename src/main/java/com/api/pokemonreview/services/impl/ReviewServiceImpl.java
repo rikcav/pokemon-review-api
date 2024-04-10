@@ -79,10 +79,16 @@ public class ReviewServiceImpl implements IReviewService {
     }
 
     @Override
-    public ReviewDTO updateReview(int id, ReviewDTO reviewDTO) {
+    public ReviewDTO updateReview(int pokemonId, int id, ReviewDTO reviewDTO) {
+        Pokemon pokemon = pokemonRepository.findById(pokemonId)
+                .orElseThrow(() -> new PokemonNotFoundException("Pokemon could not be found."));
+
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new ReviewNotFoundException("Review could not be found."));
-        int pokemonId = review.getPokemon().getId();
+
+        if (pokemon.getId() != review.getPokemon().getId()) {
+            throw new ReviewNotFoundException("This review does not belong to this pokemon.");
+        }
 
         ReviewDTO foundReview = getReview(id);
         BeanUtils.copyProperties(reviewDTO, foundReview);
