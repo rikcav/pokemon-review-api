@@ -3,7 +3,6 @@ package com.api.pokemonreview.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -33,7 +32,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET).authenticated() // Can permit users by specific role
+                        .requestMatchers("/api/auth/**").permitAll() // Can permit users by specific role
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
