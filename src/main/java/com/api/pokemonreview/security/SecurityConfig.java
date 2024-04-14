@@ -33,7 +33,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET).permitAll() // Can permit users by specific role
+                        .requestMatchers(HttpMethod.GET).authenticated() // Can permit users by specific role
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
