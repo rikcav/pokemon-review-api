@@ -1,11 +1,13 @@
 package com.api.pokemonreview.controllers;
 
+import com.api.pokemonreview.dtos.AuthResponseDTO;
 import com.api.pokemonreview.dtos.LoginDTO;
 import com.api.pokemonreview.dtos.RegisterDTO;
 import com.api.pokemonreview.models.Role;
 import com.api.pokemonreview.models.UserEntity;
 import com.api.pokemonreview.repositories.RoleRepository;
 import com.api.pokemonreview.repositories.UserRepository;
+import com.api.pokemonreview.security.JWTGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,27 +31,32 @@ public class AuthController {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private JWTGenerator jwtGenerator;
 
     @Autowired
     public AuthController(
             AuthenticationManager authenticationManager,
             UserRepository userRepository,
             RoleRepository roleRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            JWTGenerator jwtGenerator) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtGenerator = jwtGenerator;
     }
 
     @PostMapping("login")
-    public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO loginDTO) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtGenerator.generateToken(authentication);
+        AuthResponseDTO authResponse = new AuthResponseDTO(token);
 
-        return new ResponseEntity<>("User signed-in successfully.", HttpStatus.OK);
+        return new ResponseEntity<>(authResponse, HttpStatus.OK);
     }
 
     @PostMapping("register")
