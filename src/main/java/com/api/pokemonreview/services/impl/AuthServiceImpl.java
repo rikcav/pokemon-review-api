@@ -3,6 +3,8 @@ package com.api.pokemonreview.services.impl;
 import com.api.pokemonreview.dtos.AuthResponseDTO;
 import com.api.pokemonreview.dtos.LoginDTO;
 import com.api.pokemonreview.dtos.RegisterDTO;
+import com.api.pokemonreview.models.Role;
+import com.api.pokemonreview.models.UserEntity;
 import com.api.pokemonreview.repositories.RoleRepository;
 import com.api.pokemonreview.repositories.UserRepository;
 import com.api.pokemonreview.security.JWTGenerator;
@@ -14,6 +16,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
 
 @Service
 public class AuthServiceImpl implements IAuthService {
@@ -50,6 +54,20 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public String register(RegisterDTO registerDTO) {
-        return "";
+        if (userRepository.existsByUsername(registerDTO.getUsername())) {
+            return "That username is taken.";
+        }
+
+        UserEntity user = new UserEntity();
+        user.setUsername(registerDTO.getUsername());
+        user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+
+        Role roles = roleRepository.findByName("USER")
+                .orElseThrow(() -> new RuntimeException("Role not found."));
+
+        user.setRoles(Collections.singletonList(roles));
+        userRepository.save(user);
+
+        return "User registered successfully.";
     }
 }
